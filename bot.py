@@ -13,16 +13,17 @@ bot = commands.Bot(intents=intents, command_prefix=commands.when_mentioned_or("!
 
 @bot.event
 async def on_message(message: discord.Message):
-    print("in")
-    print(message.author.id)
-    print(str(message.channel.id) + "==?" + str(getenv("CHANNEL_ID")))
     # The docs say this isn't needed, but just in case
     if message.author == bot.user:
         return
+    
+    role = message.guild.get_role(int(getenv("ROLE_ID")))
+
+    if role in message.author.roles:
+        return
 
     if str(message.channel.id) == str(getenv("CHANNEL_ID")):
-        print("in2")
-        await message.author.add_roles(message.guild.get_role(int(getenv("ROLE_ID"))))
+        return await message.author.add_roles(role)
 
 
-bot.run(getenv("BOT_TOKEN"))
+bot.run(getenv("BOT_TOKEN"), log_handler=None)
